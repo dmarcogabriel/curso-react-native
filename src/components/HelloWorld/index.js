@@ -3,15 +3,12 @@ import {Text, TouchableOpacity} from 'react-native';
 
 import styles from './styles';
 
-const HelloWorld = ({title, name}) => {
-  const handlePress = () => {
-    console.log('OMG! Fui clickado de novo!');
-  };
-
+const HelloWorld = ({title, name, onPress}) => {
   // JSX
   return (
-    <TouchableOpacity style={styles.container} onPress={() => handlePress()}>
+    <TouchableOpacity style={styles.container} onPress={() => onPress(name)}>
       <Text style={styles.text}>{title}</Text>
+
       <Text style={styles.text}>{name}</Text>
     </TouchableOpacity>
   );
