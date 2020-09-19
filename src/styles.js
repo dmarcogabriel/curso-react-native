@@ -4,7 +4,7 @@ export default StyleSheet.create({
   container: {
     // flexDirection: 'row',
     flex: 1,
-    justifyContent: 'space-around',
+    // justifyContent: 'space-around',
   },
   counterView: {
     alignItems: 'center',
