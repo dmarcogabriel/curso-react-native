@@ -3,12 +3,15 @@ import {Text, View, FlatList, Image, TouchableOpacity} from 'react-native';
 import styles from './styles';
 import api from '../../services/api';
 import sharedStyles from '../../sharedStyles';
+import Header from '../../components/Header';
+import {useTheme} from '../../contexts/Theme';
 
 const Home = ({navigation}) => {
   const [pokemons, setPokemons] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [totalCount, setTotalCount] = useState(0);
   const [next, setNext] = useState('pokemon');
+
+  const {theme, handleTheme} = useTheme();
 
   const getPokemons = async () => {
     if (loading || !next) {
@@ -49,27 +52,35 @@ const Home = ({navigation}) => {
   }, []);
 
   return (
-    <View style={styles.container}>
-      <FlatList
-        data={pokemons}
-        keyExtractor={(item) => String(item.id)}
-        renderItem={({item}) => (
-          <TouchableOpacity
-            onPress={() => handleSelectPokemon(item.id)}
-            style={[styles.card, sharedStyles.shadow]}>
-            <Image
-              source={{uri: item.image}}
-              resizeMode="contain"
-              style={{width: 60, height: 60}}
-            />
+    <>
+      <Header title="Home" />
 
-            <Text style={{color: '#000'}}>{item.name}</Text>
-          </TouchableOpacity>
-        )}
-        onEndReachedThreshold={0.2}
-        onEndReached={getPokemons}
-      />
-    </View>
+      <View style={[styles.container, {backgroundColor: theme.background}]}>
+        <FlatList
+          data={pokemons}
+          keyExtractor={(item) => String(item.id)}
+          renderItem={({item}) => (
+            <TouchableOpacity
+              onPress={() => handleSelectPokemon(item.id)}
+              style={[
+                styles.card,
+                sharedStyles.shadow,
+                {backgroundColor: theme.background},
+              ]}>
+              <Image
+                source={{uri: item.image}}
+                resizeMode="contain"
+                style={{width: 60, height: 60}}
+              />
+
+              <Text style={{color: theme.color}}>{item.name}</Text>
+            </TouchableOpacity>
+          )}
+          onEndReachedThreshold={0.2}
+          onEndReached={getPokemons}
+        />
+      </View>
+    </>
   );
 };
 

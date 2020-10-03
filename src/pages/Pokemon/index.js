@@ -2,10 +2,14 @@ import React, {useState, useEffect} from 'react';
 import {Text, View, Image, ActivityIndicator} from 'react-native';
 import styles from './styles';
 import api from '../../services/api';
+import Header from '../../components/Header';
+import {useTheme} from '../../contexts/Theme';
 
 const Pokemon = ({route}) => {
   const [pokemon, setPokemon] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  const {theme} = useTheme();
 
   const loadPokemon = async () => {
     setLoading(true);
@@ -39,34 +43,48 @@ const Pokemon = ({route}) => {
 
   return (
     pokemon && (
-      <View style={styles.container}>
-        <View style={[styles.avatarView, styles.shadow]}>
-          <Image
-            source={{
-              uri: pokemon.sprites.other['official-artwork'].front_default,
-            }}
-            style={styles.avatar}
-          />
+      <>
+        <Header title="Pokemon" backButton />
+
+        <View style={[styles.container, {backgroundColor: theme.background}]}>
+          <View
+            style={[
+              styles.avatarView,
+              styles.shadow,
+              {backgroundColor: theme.primary},
+            ]}>
+            <Image
+              source={{
+                uri: pokemon.sprites.other['official-artwork'].front_default,
+              }}
+              style={styles.avatar}
+            />
+          </View>
+
+          <View
+            style={[
+              styles.content,
+              styles.shadow,
+              {backgroundColor: theme.secondary},
+            ]}>
+            <Text style={styles.name}>{capitalize(pokemon.name)}</Text>
+
+            <Text style={styles.subtitle}>Abilities</Text>
+            {pokemon.abilities.map(({ability}) => (
+              <Text key={ability.slot} style={styles.value}>
+                {capitalize(ability.name)}
+              </Text>
+            ))}
+
+            <Text style={styles.subtitle}>Types</Text>
+            {pokemon.types.map(({type}) => (
+              <Text key={type.slot} style={styles.value}>
+                {capitalize(type.name)}
+              </Text>
+            ))}
+          </View>
         </View>
-
-        <View style={[styles.content, styles.shadow]}>
-          <Text style={styles.name}>{capitalize(pokemon.name)}</Text>
-
-          <Text style={styles.subtitle}>Abilities</Text>
-          {pokemon.abilities.map(({ability}) => (
-            <Text key={ability.slot} style={styles.value}>
-              {capitalize(ability.name)}
-            </Text>
-          ))}
-
-          <Text style={styles.subtitle}>Types</Text>
-          {pokemon.types.map(({type}) => (
-            <Text key={type.slot} style={styles.value}>
-              {capitalize(type.name)}
-            </Text>
-          ))}
-        </View>
-      </View>
+      </>
     )
   );
 };
