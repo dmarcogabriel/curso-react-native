@@ -1,29 +1,43 @@
 import React, {useState, useEffect} from 'react';
 import {Text, View, FlatList, Image, TouchableOpacity} from 'react-native';
 import styles from './styles';
-import axios from 'axios';
+import api from '../../services/api';
+import sharedStyles from '../../sharedStyles';
 
 const Home = ({navigation}) => {
   const [pokemons, setPokemons] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [totalCount, setTotalCount] = useState(0);
+  const [next, setNext] = useState('pokemon');
 
   const getPokemons = async () => {
-    const response = await axios.get('https://pokeapi.co/api/v2/pokemon');
+    if (loading || !next) {
+      return;
+    }
 
-    const {results} = response.data;
+    setLoading(true);
+
+    const response = await api.get(next);
+
+    const {results, next: responseNext} = response.data;
+
+    setNext(responseNext);
 
     const request = results.map(({url}) => {
-      return axios.get(url);
+      return api.get(url);
     });
 
     const requests = await Promise.all(request);
 
-    const dataFinal = requests.map(({data}) => {
+    const loadedPokemons = requests.map(({data}) => {
       const {id, name, sprites} = data;
 
       return {id, name, image: sprites.other['official-artwork'].front_default};
     });
 
-    setPokemons(dataFinal);
+    setPokemons((oldPokemons) => [...oldPokemons, ...loadedPokemons]);
+
+    setLoading(false);
   };
 
   const handleSelectPokemon = (pokemonId) => {
@@ -42,21 +56,18 @@ const Home = ({navigation}) => {
         renderItem={({item}) => (
           <TouchableOpacity
             onPress={() => handleSelectPokemon(item.id)}
-            style={{
-              padding: 23,
-              margin: 16,
-              borderRadius: 8,
-              backgroundColor: '#333',
-            }}>
+            style={[styles.card, sharedStyles.shadow]}>
             <Image
               source={{uri: item.image}}
               resizeMode="contain"
               style={{width: 60, height: 60}}
             />
 
-            <Text style={{color: '#fff'}}>{item.name}</Text>
+            <Text style={{color: '#000'}}>{item.name}</Text>
           </TouchableOpacity>
         )}
+        onEndReachedThreshold={0.2}
+        onEndReached={getPokemons}
       />
     </View>
   );
