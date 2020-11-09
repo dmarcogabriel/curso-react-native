@@ -70,15 +70,15 @@ const Pokemon = ({route}) => {
             <Text style={styles.name}>{capitalize(pokemon.name)}</Text>
 
             <Text style={styles.subtitle}>Abilities</Text>
-            {pokemon.abilities.map(({ability}) => (
-              <Text key={ability.slot} style={styles.value}>
+            {pokemon.abilities.map(({ability}, i) => (
+              <Text key={String(i)} style={styles.value}>
                 {capitalize(ability.name)}
               </Text>
             ))}
 
             <Text style={styles.subtitle}>Types</Text>
-            {pokemon.types.map(({type}) => (
-              <Text key={type.slot} style={styles.value}>
+            {pokemon.types.map(({type}, i) => (
+              <Text key={String(i)} style={styles.value}>
                 {capitalize(type.name)}
               </Text>
             ))}

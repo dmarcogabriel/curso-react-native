@@ -3,7 +3,6 @@ import {StatusBar} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 
-import Login from './pages/Login';
 import Home from './pages/Home';
 import Pokemon from './pages/Pokemon';
 
@@ -16,7 +15,6 @@ const BAR_STYLE = {
   light: 'dark-content',
 };
 
-// JSX
 const Routes = () => {
   const {theme} = useTheme();
 
@@ -29,8 +27,6 @@ const Routes = () => {
 
       <NavigationContainer>
         <Stack.Navigator screenOptions={{headerShown: false}}>
-          <Stack.Screen name="Login" component={Login} />
-
           <Stack.Screen name="Home" component={Home} />
 
           <Stack.Screen name="Pokemon" component={Pokemon} />

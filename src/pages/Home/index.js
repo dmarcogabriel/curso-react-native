@@ -20,27 +20,34 @@ const Home = ({navigation}) => {
 
     setLoading(true);
 
-    const response = await api.get(next);
+    try {
+      const response = await api.get(next);
 
-    const {results, next: responseNext} = response.data;
+      const {results, next: responseNext} = response.data;
+      setNext(responseNext);
 
-    setNext(responseNext);
+      const request = results.map(({url}) => {
+        return api.get(url);
+      });
 
-    const request = results.map(({url}) => {
-      return api.get(url);
-    });
+      const requests = await Promise.all(request);
 
-    const requests = await Promise.all(request);
+      const loadedPokemons = requests.map(({data}) => {
+        const {id, name, sprites} = data;
 
-    const loadedPokemons = requests.map(({data}) => {
-      const {id, name, sprites} = data;
+        return {
+          id,
+          name,
+          image: sprites.other['official-artwork'].front_default,
+        };
+      });
 
-      return {id, name, image: sprites.other['official-artwork'].front_default};
-    });
+      setPokemons((oldPokemons) => [...oldPokemons, ...loadedPokemons]);
 
-    setPokemons((oldPokemons) => [...oldPokemons, ...loadedPokemons]);
-
-    setLoading(false);
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleSelectPokemon = (pokemonId) => {
@@ -49,6 +56,7 @@ const Home = ({navigation}) => {
 
   useEffect(() => {
     getPokemons();
+    // eslint-disable-next-line
   }, []);
 
   return (
